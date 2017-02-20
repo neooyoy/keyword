@@ -54,7 +54,7 @@ public class LoginController extends BaseController {
      * @return
      * @author chenjun 20160629
      */
-    @RequestMapping("/loginxiezilou")
+    @RequestMapping("/login")
     public String login(User user, Model model, HttpServletRequest request) {
         String url = "";
         try {
@@ -181,7 +181,7 @@ public class LoginController extends BaseController {
     public String login(Model model) {
         return "system/login";
     }*/
-    @RequestMapping(value = "logoutxiezilou", method = RequestMethod.GET)
+    @RequestMapping(value = "logout", method = RequestMethod.GET)
     public String logout(HttpSession session) throws IOException {
         session.invalidate();
         return "system/login";
@@ -192,31 +192,8 @@ public class LoginController extends BaseController {
      */
     @RequestMapping("/")
     public String index() throws Exception {
-        return "foreground/index";
+        return "keyword/list";
     }
 
-  /*  @RequestMapping(value = "logout", method = RequestMethod.GET)
-    public RedirectView signout(HttpServletResponse response, HttpSession session) throws IOException {
-        RedirectView view = new RedirectView();
-        session.invalidate();
-
-        view.setUrl(sso_login_url_root + "/logout");
-        return view;
-    }*/
-
-/*    @RequestMapping(value = "stat")
-    public void state(HttpServletResponse response) throws IOException {
-        PrintWriter writer = response.getWriter();
-        writer.write("ok");
-        writer.flush();
-        writer.close();
-    }
-
-
-    @RequestMapping("test")
-    public String test() {
-        System.out.println(1 / 0);
-        return "index";
-    }*/
 
 }

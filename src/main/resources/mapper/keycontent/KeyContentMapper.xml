@@ -3,7 +3,7 @@
 <mapper namespace="com.keyword.dao.keycontent.KeyContentDao">
     <resultMap id="keycontentMap" type="com.keyword.domain.keycontent.KeyContent">
           <id property="id" column="id"/>
-          <result property="key" column="key"/>
+          <result property="keyword" column="keyword"/>
           <result property="content" column="content"/>
     </resultMap>
 
@@ -13,8 +13,8 @@
                <if test="id != null">
                   id,
                </if>
-               <if test="key != null">
-                  key,
+               <if test="keyword != null">
+                  keyword,
                </if>
                <if test="content != null">
                   content,
@@ -24,8 +24,8 @@
                 <if test="id != null">
                   #{id},
                 </if>
-                <if test="key != null">
-                  #{key},
+                <if test="keyword != null">
+                  #{keyword},
                 </if>
                 <if test="content != null">
                   #{content},
@@ -36,7 +36,7 @@
     <select id="selectById" resultMap="keycontentMap" parameterType="java.lang.Integer">
 		select
             kc.id,
-            kc.key,
+            kc.keyword,
             kc.content
 	    from key_content kc
 	    where kc.id = #{id} 
@@ -45,15 +45,15 @@
 	<select id="selectByListPage" resultMap="keycontentMap" parameterType="map">
 	    select
             kc.id,
-            kc.key,
+            kc.keyword,
             kc.content
         from key_content kc 
         <trim prefix="where" prefixOverrides="and|or">
             <if test="vo.id != null">
             	and kc.id = #{vo.id}
             </if>
-            <if test="vo.key != null">
-            	and kc.key = #{vo.key}
+            <if test="vo.keyword != null">
+            	and kc.keyword = #{vo.keyword}
             </if>
             <if test="vo.content != null">
             	and kc.content = #{vo.content}
@@ -65,7 +65,7 @@
 	<select id="listAll" resultMap="keycontentMap" >
 		select
             kc.id,
-            kc.key,
+            kc.keyword,
             kc.content
 	    from key_content kc
 	</select>
@@ -76,8 +76,8 @@
 	        <if test="id != null">
 	          id = #{id},
 	        </if>
-	        <if test="key != null">
-	          key = #{key},
+	        <if test="keyword != null">
+	          keyword = #{keyword},
 	        </if>
 	        <if test="content != null">
 	          content = #{content},
@@ -90,4 +90,14 @@
         delete from key_content
         where id = #{id}
     </delete>
+
+    <insert id="batchInsertKeyContents" parameterType="java.util.List">
+        insert into key_content (
+            keyword, content
+        ) values
+        <foreach collection="contentList" item="item" index="index" separator="," >
+            (#{item.keyword}, #{item.content})
+        </foreach>
+    </insert>
+
 </mapper>

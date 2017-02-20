@@ -1,16 +1,6 @@
 package com.keyword.controller.keyword;
 
-import com.keyword.domain.banner.Banner;
-import com.keyword.domain.office.Office;
-import com.keyword.domain.office.OfficeImgs;
-import com.keyword.domain.partners.Partners;
-import com.keyword.domain.servicehotline.Servicehotline;
 import com.keyword.mybatis.Paging;
-import com.keyword.service.banner.BannerService;
-import com.keyword.service.office.OfficeImgsService;
-import com.keyword.service.office.OfficeService;
-import com.keyword.service.partners.PartnersService;
-import com.keyword.service.servicehotline.ServicehotlineService;
 import com.keyword.utils.Logger;
 import com.keyword.vo.JsonObject;
 import org.springframework.stereotype.Controller;
@@ -55,7 +45,7 @@ public class KeywordController {
 	 */
 	@RequestMapping("querylist")
 	@ResponseBody
-	public JsonObject querylist(Office office, Paging page) {
+	public JsonObject querylist(String content, Paging page) {
 		JsonObject jsonObject = new JsonObject();
 	/*	try {
 			office.setStatus(1);

@@ -3,8 +3,10 @@ package com.keyword.controller.system;
 import com.alibaba.fastjson.JSONObject;
 import com.keyword.constant.Constant;
 import com.keyword.controller.base.BaseController;
+import com.keyword.domain.keycontent.KeyContent;
 import com.keyword.domain.system.*;
 import com.keyword.mybatis.Paging;
+import com.keyword.service.keycontent.KeyContentService;
 import com.keyword.service.system.SystemService;
 //import com.publiccms.service.system.UserDetailService;
 import com.keyword.utils.AES_DE;
@@ -12,6 +14,7 @@ import com.keyword.utils.ExcelUtil;
 import com.keyword.utils.PageJsonUtil;
 import com.keyword.vo.JsonObject;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,8 +39,11 @@ import java.util.*;
 @RequestMapping(value = "system")
 public class SystemController extends BaseController {
 
-    @Resource
-    public SystemService systemService;
+    @Autowired
+    private SystemService systemService;
+
+    @Autowired
+    private KeyContentService keyContentService;
 
 
 //    @Resource
@@ -219,7 +225,7 @@ public class SystemController extends BaseController {
                 operateUser.setCellPhone(user.getCellPhone());
                 operateUser.setFullname(user.getFullname());
                 operateUser.setEmail(user.getEmail());
-                
+
                 HttpSession session = request.getSession(true);
                 session.setAttribute("user", operateUser);
             }
@@ -283,22 +289,50 @@ public class SystemController extends BaseController {
         return "system/importExcel";
     }
 
+    /**
+     * 导入excel数据
+     *
+     * @param files
+     * @param request
+     * @return
+     */
     @RequestMapping("/doImportExcel")
     @ResponseBody
     public JSONObject importHouseExcel(@RequestParam("files") MultipartFile[] files, HttpServletRequest request) {
         JSONObject json = new JSONObject();
         try {
+            Integer result = 0;
+
+            List<KeyContent> keyContentList = new ArrayList<>();
 
             if (files != null && files.length > 0) {
-                for (int i=0; i<files.length; i++) {
-                    String filePath = saveFile(files[i] , request);
+                for (int i = 0; i < files.length; i++) {
+                    String filePath = saveFile(files[i], request);
                     if (filePath != null) {
                         Map<String, List<String>> keyListMap = ExcelUtil.readExcel(filePath);
-                        System.out.print(filePath);
-                    }
 
+                        System.out.print(filePath);
+
+                        for (String key : keyListMap.keySet()) {
+                            List<String> contentList = keyListMap.get(key);
+                            if (!contentList.isEmpty()) {
+                                for (String content : contentList) {
+                                    KeyContent keyContent = new KeyContent();
+                                    keyContent.setKeyword(key);
+                                    keyContent.setContent(content);
+                                    keyContentList.add(keyContent);
+                                }
+                            }
+                        }
+                    }
                 }
             }
+
+            //保存数据
+            batchInsert(keyContentList);
+
+            json.put("success", true);
+            json.put("message", "文件导入成功，共导入" + keyContentList.size() + "条数据");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -309,13 +343,39 @@ public class SystemController extends BaseController {
         return json;
     }
 
+    /**
+     * 批量插入
+     *
+     * @param keyContentList
+     */
+    private void batchInsert(List<KeyContent> keyContentList) throws Exception {
+        if (!keyContentList.isEmpty()) {
+            if (keyContentList.size() > 1000) {
+
+                this.keyContentService.batchInsertKeyContents(keyContentList);
+
+            } else {
+                for (int i = 0; i < keyContentList.size(); ) {
+                    int endIndex = keyContentList.size() > (i + 1000) ? (i + 1000) : keyContentList.size();
+
+                    List<KeyContent> curKeyContents = keyContentList.subList(i, endIndex);
+
+                    this.keyContentService.batchInsertKeyContents(curKeyContents);
+
+                    i = endIndex;
+                }
+            }
+        }
+    }
+
 
     /***
      * 保存文件
+     *
      * @param file
      * @return
      */
-    private String saveFile(MultipartFile file , HttpServletRequest request) {
+    private String saveFile(MultipartFile file, HttpServletRequest request) {
         // 判断文件是否为空
         if (!file.isEmpty()) {
             try {

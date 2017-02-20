@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.keyword.service.keycontent.KeyContentService;
 import com.keyword.dao.keycontent.KeyContentDao;
 import com.keyword.domain.keycontent.KeyContent;
-import com.uban.mybatis.Paging;
+import com.keyword.mybatis.Paging;
 
 @Service
 public class KeyContentServiceImpl implements KeyContentService{
@@ -46,6 +46,17 @@ public class KeyContentServiceImpl implements KeyContentService{
     public Integer deleteById(Integer id) {
     	return this.keycontentDao.deleteById(id);
     }
-    
+
+
+    /**
+     * 批量导入数据
+     *
+     * @param contentList
+     * @return
+     * @throws Exception
+     */
+    public Integer batchInsertKeyContents(List<KeyContent> contentList) throws Exception {
+        return this.keycontentDao.batchInsertKeyContents(contentList);
+    }
 }
 

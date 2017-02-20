@@ -11,8 +11,8 @@ import org.apache.poi.ss.util.CellRangeAddress;
 
 public class ExcelUtil {
 
-    /*public static void main(String[] args) throws IOException {
-        readExcel("g:\\\\excel\\\\知识库（1月24日更新）(1).xlsx");
+   /* public static void main(String[] args) throws IOException {
+        readExcel("d:\\\\github\\\\workspace_private\\\\word\\\\知识库最新版2.20.xlsx");
     }*/
 
     private static SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
@@ -30,12 +30,12 @@ public class ExcelUtil {
      * @return
      */
     private static Map<String, List<String>> getKeywordResult(Map<String, String[][]> keywordMap) {
-        Map<String, Integer> keywordResultMap = new HashMap<>();
-
         Map<String, List<String>> keyListMap = new HashMap<>();
 
         if (keywordMap != null && !keywordMap.isEmpty()) {
             for (String key : keywordMap.keySet()) {
+                Map<String, Integer> keywordResultMap = new HashMap<>();
+
                 String[][] keywords = keywordMap.get(key);
 
                 //特殊表格，“公交车”特殊处理
@@ -45,8 +45,11 @@ public class ExcelUtil {
                     keyListMap.put(key, wordList);
                 } else {
                     //获取整行关键字
-                    for (int i=0; i<keywords.length; i++) {
-                        keywordResultMap.put(getkeywordLineData(key, keywords[i]), 1);
+                    for (int i = 0; i < keywords.length; i++) {
+                        String value = getkeywordLineData(key, keywords[i]);
+                        if (StringUtils.isNotBlank(value)) {
+                            keywordResultMap.put(getkeywordLineData(key, keywords[i]), 1);
+                        }
                     }
 
                     keyListMap.put(key, new ArrayList<String>(keywordResultMap.keySet()));
@@ -70,17 +73,17 @@ public class ExcelUtil {
         List<String> blockList = new ArrayList<String>();
 
 
-        for (int i=0; i<lastLineIndex; i++) {
+        for (int i = 0; i < lastLineIndex; i++) {
             String[] words = keywords[i];
 
             int begin = 0;
             int end = 0;
             boolean hasSegent = false;
-            for (int j=0; j<words.length; j++) {
+            for (int j = 0; j < words.length; j++) {
                 if (StringUtils.isBlank(words[j])) {
 
                     if (!hasSegent) {
-                        end = j-1;
+                        end = j - 1;
                     }
 
                     hasSegent = true;
@@ -104,7 +107,7 @@ public class ExcelUtil {
             int begin_x = Integer.valueOf(firstSegment.split(",")[0]);
 
 
-            for (int i=0; i<segmentList.size(); i++) {
+            for (int i = 0; i < segmentList.size(); i++) {
 
                 String segement = segmentList.get(i);
                 String[] segmentArray = segement.split(",");
@@ -119,11 +122,11 @@ public class ExcelUtil {
                 int begin = begin_x;
                 int end = 0;
                 boolean hasSegent = false;
-                for (int j=begin_x; j<keywords.length; j++) {
+                for (int j = begin_x; j < keywords.length; j++) {
                     if (StringUtils.isBlank(keywords[j][index_y])) {
 
                         if (!hasSegent) {
-                            end = j-1;
+                            end = j - 1;
                         }
 
                         hasSegent = true;
@@ -149,10 +152,13 @@ public class ExcelUtil {
 
         if (!blockList.isEmpty()) {
 
-            for (int index=0; index<blockList.size(); index++) {
+            for (int index = 0; index < blockList.size(); index++) {
                 String value = "";
                 StringBuffer data = new StringBuffer();
-                data.append(key);
+
+                if (key.indexOf("sheet") == -1 && key.indexOf("Sheet") == -1) {
+                    data.append(key);
+                }
 
                 String[] curBlockArray = blockList.get(index).split(",");
                 int block_begin_x = Integer.valueOf(curBlockArray[0]);
@@ -160,18 +166,18 @@ public class ExcelUtil {
                 int block_end_x = Integer.valueOf(curBlockArray[2]);
                 int block_end_y = Integer.valueOf(curBlockArray[3]);
 
-                for (int i=block_begin_x; i<block_end_x; i++) {
-                    for (int j=block_begin_y; j<block_end_y; j++) {
+                for (int i = block_begin_x; i < block_end_x; i++) {
+                    for (int j = block_begin_y; j < block_end_y; j++) {
                         if (keywords[i][j] != null && !value.equals(keywords[i][j])) {
                             value = keywords[i][j];
-                            data.append("\\t");
+                            data.append("\t");
                             data.append(keywords[i][j]);
                         } else {
-                            data.append("\\t");
+                            data.append("\t");
                         }
                     }
 
-                    data.append("\\n");
+                    data.append("\n");
                 }
 
                 wordList.add(data.toString());
@@ -190,19 +196,23 @@ public class ExcelUtil {
      */
     private static String getkeywordLineData(String key, String[] words) {
         StringBuffer data = new StringBuffer();
-        data.append(key);
+
+        if (key.indexOf("sheet") == -1 && key.indexOf("Sheet") == -1) {
+            data.append(key);
+        }
+
         String value = "";
-        for (int j=0; j<words.length; j++) {
+        for (int j = 0; j < words.length; j++) {
             if (words[j] != null && !value.equals(words[j])) {
                 value = words[j];
                 if (value.length() > 20) {
-                    data.append("\\n");
+                    data.append("\n");
                 } else {
-                    data.append("\\t");
+                    data.append("\t");
                 }
                 data.append(words[j]);
             } else {
-                data.append("\\t");
+                data.append("\t");
             }
         }
         return data.toString();
@@ -223,11 +233,16 @@ public class ExcelUtil {
             Map<String, String[][]> keywordMap = new HashMap<>();
 
             //遍历每个Sheet
-            for (int s = 0; s < 3; s++) {
+            for (int s = 0; s < sheetCount; s++) {
                 Sheet sheet = workbook.getSheetAt(s);
                 String sheetName = sheet.getSheetName();
                 int rowCount = sheet.getPhysicalNumberOfRows(); //获取总行数
                 Row firstRow = sheet.getRow(0);
+
+                if (firstRow == null) {
+                    continue;
+                }
+
                 cellCount = firstRow.getPhysicalNumberOfCells(); //获取总列数，以第一行的列为主
 
                 String[][] resultData = new String[rowCount][cellCount];
@@ -251,12 +266,19 @@ public class ExcelUtil {
                             cellValue = getCellValue(cell);
                         }*/
 
-                        cellValue = getMergedRegionValue(sheet, r, c , cell);
+                        cellValue = getMergedRegionValue(sheet, r, c, cell);
 
                         resultData[r][c] = cellValue;
                     }
 
+                    /*if (keywordMap.get(sheetName) != null) {
+                        keywordMap.put(sheetName + "_" + System.currentTimeMillis() / 1000, resultData);
+                    } else {
+                        keywordMap.put(sheetName, resultData);
+                    }*/
+
                     keywordMap.put(sheetName, resultData);
+
                 }
             }
 
@@ -270,57 +292,59 @@ public class ExcelUtil {
 
     /**
      * 判断指定的单元格是否是合并单元格
+     *
      * @param sheet
      * @param row
      * @param column
      * @return
      */
-    private static boolean isMergedRegion(Sheet sheet , int row , int column){
+    private static boolean isMergedRegion(Sheet sheet, int row, int column) {
         int sheetMergeCount = sheet.getNumMergedRegions();
-        for(int i = 0 ; i < sheetMergeCount ; i++ ){
+        for (int i = 0; i < sheetMergeCount; i++) {
             CellRangeAddress ca = sheet.getMergedRegion(i);
             int firstColumn = ca.getFirstColumn();
             int lastColumn = ca.getLastColumn();
             int firstRow = ca.getFirstRow();
             int lastRow = ca.getLastRow();
 
-            if(row >= firstRow && row <= lastRow){
-                if(column >= firstColumn && column <= lastColumn){
-                    return true ;
+            if (row >= firstRow && row <= lastRow) {
+                if (column >= firstColumn && column <= lastColumn) {
+                    return true;
                 }
             }
         }
-        return false ;
+        return false;
     }
 
     /**
      * 获取合并单元格的值
+     *
      * @param sheet
      * @param row
      * @param column
      * @return
      */
-    private static String getMergedRegionValue(Sheet sheet ,int row , int column, Cell cell){
+    private static String getMergedRegionValue(Sheet sheet, int row, int column, Cell cell) {
         int sheetMergeCount = sheet.getNumMergedRegions();
 
         boolean isMergedRegion = false;
 
-        for(int i = 0 ; i < sheetMergeCount ; i++){
+        for (int i = 0; i < sheetMergeCount; i++) {
             CellRangeAddress ca = sheet.getMergedRegion(i);
             int firstColumn = ca.getFirstColumn();
             int lastColumn = ca.getLastColumn();
             int firstRow = ca.getFirstRow();
             int lastRow = ca.getLastRow();
 
-            if(row >= firstRow && row <= lastRow){
+            if (row >= firstRow && row <= lastRow) {
 
-                if(column >= firstColumn && column <= lastColumn){
+                if (column >= firstColumn && column <= lastColumn) {
                     isMergedRegion = true;
 
                     Row fRow = sheet.getRow(firstRow);
                     Cell fCell = fRow.getCell(firstColumn);
 
-                    return getCellValue(fCell) ;
+                    return getCellValue(fCell);
                 }
             }
         }
@@ -334,10 +358,11 @@ public class ExcelUtil {
 
     /**
      * 获取单元格的值
+     *
      * @param cell
      * @return
      */
-    private static String getCellValue(Cell cell){
+    private static String getCellValue(Cell cell) {
         String cellValue = "";
         if (cell != null) {
             int cellType = cell.getCellType();
@@ -355,6 +380,9 @@ public class ExcelUtil {
                             cellValue = value.substring(0, value.lastIndexOf(".")); //数字
                         } else {
                             cellValue = value; //数字
+                        }
+                        if (cellValue.equals("")) {
+                            cellValue = "0";
                         }
                     }
                     break;

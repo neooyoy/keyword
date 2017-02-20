@@ -3,7 +3,7 @@ package com.keyword.service.keycontent;
 import java.util.List;
 
 import com.keyword.domain.keycontent.KeyContent;
-import com.uban.mybatis.Paging;
+import com.keyword.mybatis.Paging;
 
 public interface KeyContentService{
 
@@ -18,6 +18,15 @@ public interface KeyContentService{
     public Integer updateById(KeyContent keycontent);
     
     public Integer deleteById(Integer id);
+
+    /**
+     * 批量导入数据
+     *
+     * @param contentList
+     * @return
+     * @throws Exception
+     */
+    public Integer batchInsertKeyContents(List<KeyContent> contentList) throws Exception;
 
 }
 
