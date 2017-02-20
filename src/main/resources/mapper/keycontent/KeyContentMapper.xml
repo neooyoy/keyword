@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.keyword.dao.keycontent.KeyContentDao">
+    <resultMap id="keycontentMap" type="com.keyword.domain.keycontent.KeyContent">
+          <id property="id" column="id"/>
+          <result property="key" column="key"/>
+          <result property="content" column="content"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.keyword.domain.keycontent.KeyContent">
+        insert into key_content 
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+               <if test="id != null">
+                  id,
+               </if>
+               <if test="key != null">
+                  key,
+               </if>
+               <if test="content != null">
+                  content,
+               </if>
+            </trim>
+        	<trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="id != null">
+                  #{id},
+                </if>
+                <if test="key != null">
+                  #{key},
+                </if>
+                <if test="content != null">
+                  #{content},
+                </if>
+            </trim>
+    </insert>
+
+    <select id="selectById" resultMap="keycontentMap" parameterType="java.lang.Integer">
+		select
+            kc.id,
+            kc.key,
+            kc.content
+	    from key_content kc
+	    where kc.id = #{id} 
+	</select>
+
+	<select id="selectByListPage" resultMap="keycontentMap" parameterType="map">
+	    select
+            kc.id,
+            kc.key,
+            kc.content
+        from key_content kc 
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="vo.id != null">
+            	and kc.id = #{vo.id}
+            </if>
+            <if test="vo.key != null">
+            	and kc.key = #{vo.key}
+            </if>
+            <if test="vo.content != null">
+            	and kc.content = #{vo.content}
+            </if>
+		</trim>
+		order by kc.id desc
+    </select>
+
+	<select id="listAll" resultMap="keycontentMap" >
+		select
+            kc.id,
+            kc.key,
+            kc.content
+	    from key_content kc
+	</select>
+
+    <update id="updateById" parameterType="com.keyword.domain.keycontent.KeyContent">
+	    update key_content 
+			<set> 
+	        <if test="id != null">
+	          id = #{id},
+	        </if>
+	        <if test="key != null">
+	          key = #{key},
+	        </if>
+	        <if test="content != null">
+	          content = #{content},
+	        </if>
+	        </set>
+	    where id = #{id}
+	</update>
+
+	<delete id="deleteById" parameterType="java.lang.Integer">
+        delete from key_content
+        where id = #{id}
+    </delete>
+</mapper>
