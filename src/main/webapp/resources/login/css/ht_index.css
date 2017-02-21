@@ -28,7 +28,7 @@ input[type="text"].verify{width: 107px; height: 42px; line-height: 42px; font-si
 .float_box a{display: block; font-size: 12px;}
 .login_btn{width: 90%; text-align: center; }
 
-.login_ht_btn{width: 150px; height: 45px; font-size: 20px; color: #fff; border: none; border-radius: 6px; background: #4996ab; }
+.login_ht_btn{width: 150px; height: 45px; font-size: 20px; color: #fff; border: none; border-radius: 6px; background: #28C8C9; }
 .login_ht_btn_red{width: 150px; height: 45px; font-size: 20px; color: #fff; border: none; border-radius: 6px; background: #ff0000; }
 .btn:hover, .btn:focus, .btn:active, .btn.active, .btn.disabled, .btn[disabled]{color: #fff; background: #448b96}
 .login_ht_btn_red:hover, .login_ht_btn_red:focus, .login_ht_btn_red:active{color: #fff; background: #D11414}

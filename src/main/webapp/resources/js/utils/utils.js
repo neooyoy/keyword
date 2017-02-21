@@ -223,7 +223,7 @@ function dateMinuteToZHDate(minute){
  */
 function renderOfBuildingName(record, value){
     var url = base + "/officeController/insertOrUpdateOffice?id=" + record["id"];
-    return  "<a onclick='window.open(\"" +url +"\")' class='unline' style='cursor:pointer;' >" + " <font color='#28a4c9'>"+ value + "</font></a>";
+    return  "<a onclick='window.open(\"" +url +"\")' class='unline' style='cursor:pointer;' >" + " <font color='#28C8C9'>"+ value + "</font></a>";
 }
 
 
@@ -253,7 +253,7 @@ function renderOfBuildingStatus(record, value){
  */
 function renderOfLockflag(record, value){
     if (value == 0){
-        return "<font color='#28a4c9'>未锁盘</font>";
+        return "<font color='#28C8C9'>未锁盘</font>";
     }else if (value == 1){
         return "<font color='#ff0000'>锁盘</font>";
     }
@@ -447,7 +447,7 @@ function houseName(record, value){
     }
 
     var url = base + "/houseController/houseModify?id=" + record["id"];
-    return  "<a onclick='window.open(\"" +url +"\")' class='unline' style='cursor:pointer;'>" + " <font color='#28a4c9'>"+ value + "</font></a>" + tags ;
+    return  "<a onclick='window.open(\"" +url +"\")' class='unline' style='cursor:pointer;'>" + " <font color='#28C8C9'>"+ value + "</font></a>" + tags ;
 }
 
 
@@ -459,7 +459,7 @@ function houseName(record, value){
  */
 function closedHouseName(record, value){
     var url = base + "/houseCloseController/houseCloseDetails?id=" + record["id"];
-    return  "<a onclick='window.open(\"" +url +"\")' class='unline' style='cursor:pointer;'>" + " <font color='#28a4c9'>"+ value + "</font></a>" ;
+    return  "<a onclick='window.open(\"" +url +"\")' class='unline' style='cursor:pointer;'>" + " <font color='#28C8C9'>"+ value + "</font></a>" ;
 }
 
 /**
@@ -668,7 +668,7 @@ function keyCheckNoRepeat(value,array){
 var renderOfOfficeHouseCount = function(record, value){
     var url = base + "/houseController/fangyuanlist?officeId=" +
         record.id + ",officeName=" + encodeURI(record.name);
-    return  "<a onclick='window.open(\"" +url +"\")' class='unline' style='cursor:pointer;'>" + " <font color='#28a4c9'>"+ value + "</font></a>" ;
+    return  "<a onclick='window.open(\"" +url +"\")' class='unline' style='cursor:pointer;'>" + " <font color='#28C8C9'>"+ value + "</font></a>" ;
 
 }
 
