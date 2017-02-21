@@ -3,8 +3,8 @@ var dataGrid = function () {
     this.defaultParams = {
         //参数定义
         id: "",
-        data: null,
-        url: null,
+        data: null,  //初始化默认数据
+        url: null,   //数据请求链接
         tableWidth: '100%',
         //tableHeight : '100%',
         tHeadColor: "",
@@ -13,11 +13,11 @@ var dataGrid = function () {
         //tHeadHeight: 50,
         tHeadStyle: "",
         tHeadCols: null,
-        params: {},
+        params: {},   //请求参数
         total: 0,
-        sort: "desc",
+        sort: "desc",  //默认降序
         order: "",
-        lineLenth: 20,
+        lineLenth: 30,  //每一列显示的字数长度，默认20
         checkedRecords: [],
         searchButtonId: '',
         searchParams: [{
@@ -31,11 +31,11 @@ var dataGrid = function () {
             title: "",
             width: "",
             align: "",
-            sortable: "",
+            sortable: "",  //当前列是否排序
             type: "",
             style: "",
-            hidden: false, //是否显示
-            render: function (record, value) {
+            hidden: false, //当前列是否显示
+            render: function (record, value) { //record表示当前行所有属性值，value表示当前行所在列的值
                 return value;
             },
             convert: function (value) {
@@ -62,20 +62,23 @@ var dataGrid = function () {
         pageSizeComm: '每页 20 条',
         currentPage: 1, //当前页
         trTdentity: null,   //行标识
-        tEnumDataGridSkin: $.enumDdataGrid.enumSkin.defalut,  //选择皮肤风格，默认风格
+        tEnumDataGridSkin: $.enumDdataGrid.enumSkin.uban,  //选择皮肤风格，默认uban风格
         rowNumberTitel: '序号',
         rowNumber: false,      //是否显示行号
         rowNumberWidth: 20,
-        tBodyTrDblclickCallBack: $.noop, //双击行 的回到函数
-        _handleTbodyTrClick: $.noop,
-        //isOverWriteThclick:false,
-        onload: function () {
+        tBodyTrDblclickCallBack: function(record){//双击行事件
             return;
         },
-        beforeload: function () {
+        _handleTbodyTrClick: function(record){//单击列表行事件
             return;
         },
-        thClickCallback: null
+        onload: function () {            //加载列表结束后事件
+            return;
+        },
+        beforeload: function () {        //加载列表前事件
+            return;
+        },
+        thClickCallback: null      //单击列表头事件，主要用于排序
     };
     this.options = {};
 };
@@ -133,6 +136,7 @@ dataGrid.prototype = {
      },*/
     reload: function (params) {
         this.options.currentPage = 1;
+        this.options.checkedRecords = [];
 
         if (params != null) {
             this.options.params = params.params;
@@ -161,7 +165,7 @@ dataGrid.prototype = {
             this._init();
         }
     },
-    getCurSelectRecord: function (id) {
+    getSelectRecordById: function (id) {
         var curRecord = null;
         var data = this.options.data;
         if (data != null && data.length > 0)
@@ -240,7 +244,7 @@ dataGrid.prototype = {
     ///     初始化选择皮肤
     tInitializeSelectPSkin: function () {
         switch (this.options.tEnumDataGridSkin) {
-            case $.enumDdataGrid.enumSkin.defalut:
+            case $.enumDdataGrid.enumSkin.uban:
                 //this.options.tableWidth = "100%";
                 this.options.tHeadColor = "black";
                 this.options.tHeadBgColor = "#e1e1e1";
@@ -401,11 +405,15 @@ dataGrid.prototype = {
                 dataType: "json",
                 async: false,
                 success: function (result) {
-                    optionsData = result.rows;
-                    pageCount = result.pageSize;
-                    total = result.total;
-                    if (result.attributes != null) {
-                        attributes = result.attributes;
+                    if (result instanceof Array) {
+                        optionsData = result;
+                    } else {
+                        optionsData = result.rows;
+                        pageCount = result.pageSize;
+                        total = result.total;
+                        if (result.attributes != null) {
+                            attributes = result.attributes;
+                        }
                     }
                 }
             });
@@ -726,8 +734,8 @@ dataGrid.prototype = {
 
                 //tableFootHtml += "<li style='margin-bottom: 10px;'><input id='tableFootPageSize' style='display: inline;margin-bottom: 10px' placeholder='每页条数' value='20'></li>";
 
-              /*  "<li><a href='#'>其他</a></li><li class='divider'></li>" +
-                "<li><a href='#'>分离的链接</a></li></ul></div></li>";*/
+                /*  "<li><a href='#'>其他</a></li><li class='divider'></li>" +
+                 "<li><a href='#'>分离的链接</a></li></ul></div></li>";*/
 
             }
 
@@ -738,7 +746,7 @@ dataGrid.prototype = {
                     "<button class='btn btn-white dropdown-toggle' type='button' data-toggle='dropdown' style='padding:3px 12px'>" +
                     "<span style='border-right: 5px solid transparent; border-left: 5px solid transparent; border-top: 6px solid rgb(40, 164, 201) ! important;' class='caret'>" +
                     "</span> <span class='sr-only'>每页条数</span></button>" +
-                    "<ul name='dropdown-menu' class='dropdown-menu' role='menu' style='top: -750%'>" +
+                    "<ul name='dropdown-menu' class='dropdown-menu' role='menu' style='top: 100%'>" +
                     "<li><a href='#' onclick='changePageSize(\"" + id + "\",\"" + '每页 20 条' + "\",\"" + 20 + "\")'>20</a></li>" +
                     "<li><a href='#' onclick='changePageSize(\"" + id + "\",\"" + '每页 50 条' + "\",\"" + 50 + "\")'>50</a></li>" +
                     "<li><a href='#' onclick='changePageSize(\"" + id + "\",\"" + '每页 100 条' + "\",\"" + 100 + "\")'>100</a></li>" +
@@ -1316,7 +1324,7 @@ dataGrid.prototype = {
                 objTr.css("background-color", options.tBodyEvenTrBgcolor);
             }
         });
-        this.options.checkedRecords = null;
+        this.options.checkedRecords = [];
     },
     /******************************(事件句柄 end)******************************/
     //设置选中行的样式
@@ -1336,3 +1344,41 @@ dataGrid.prototype = {
         }
     }
 };
+
+/**
+ * 获取公共控件列表-datagrid的options配置
+ * @param datagridId
+ * @returns json
+ * @author chenjun 20160307
+ */
+function getDataGridOptions(datagridId){
+    var options = {};
+    var datagridInit = $("#"+datagridId).attr('datagrid');
+    if (datagridInit != null){
+        options = eval('(' + datagridInit + ')');
+    }
+    return options;
+}
+
+$(function () {
+    /**
+     * 生成datagrid列表
+     * @type {dataGrid}
+     * @author chenjun 20160720
+     */
+    var grids = $('.datagrid');
+    for (var i=0; i<grids.length; i++){
+        var gridId = grids[i].id;
+
+        $.fn[gridId] = new dataGrid();
+        var gridOptions = getDataGridOptions(gridId);
+        if (gridOptions != null){
+            $(grids[i])[gridId].init(gridOptions);
+        }
+    }
+});
+
+
+
+
+

@@ -67,6 +67,21 @@
                             </div>
                         </a>
                     </li>
+
+                    [#if "${active}" == "keywords"]
+                    <li class="active">
+                        [#else]
+                    <li>
+                        [/#if]
+
+                        <span class="circular-mark"></span>
+                        <a href="${base}/keycontentController/contentPage">
+                            <div class="content-box">
+                                <span class="submenu-title">数据列表</span>
+                            </div>
+                        </a>
+                    </li>
+
                 </ul>
             </li>
         </ul>

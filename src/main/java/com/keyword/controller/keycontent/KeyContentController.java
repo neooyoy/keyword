@@ -2,9 +2,13 @@ package com.keyword.controller.keycontent;
 
 import com.alibaba.fastjson.JSONObject;
 import com.keyword.domain.keycontent.KeyContent;
+import com.keyword.mybatis.Paging;
 import com.keyword.service.keycontent.KeyContentService;
 import com.keyword.utils.ExcelUtil;
 import com.keyword.utils.Logger;
+import com.keyword.utils.PageJsonUtil;
+import com.keyword.vo.JsonObject;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Controller 
+@Controller
 @RequestMapping("/keycontentController")
 public class KeyContentController {
 
@@ -27,6 +31,70 @@ public class KeyContentController {
 
     @Autowired
     private KeyContentService keyContentService;
+
+    @RequestMapping("/contentPage")
+    public String openUserRefusePage(Model model) {
+        model.addAttribute("active", "keywords");
+        model.addAttribute("currentMenu_type", 1);
+        model.addAttribute("currentMenu_parentName", "数据管理");
+        model.addAttribute("currentMenu_menuName", "数据列表");
+        return "keycontent/contentPage";
+    }
+
+    @RequestMapping("/searchContentList")
+    @ResponseBody
+    public JsonObject searchContentList(String keywords, Paging page) {
+        JsonObject jsonObject = null;
+        try {
+
+            String sql = "";
+            List<String> keywordList = new ArrayList<>();
+
+            if (StringUtils.isNotBlank(keywords) && StringUtils.isNotBlank(keywords.trim())) {
+                String[] keywordArray = keywords.split(" ");
+
+                for (int i = 0; i < keywordArray.length; i++) {
+                    if (StringUtils.isNotBlank(keywordArray[i])) {
+                        keywordList.add(keywordArray[i]);
+                    }
+                }
+
+                for (int i = 0; i < keywordList.size(); i++) {
+                    if (i == 0) {
+                        sql += " kc.content like '%" + keywordList.get(i) + "%'";
+                    } else {
+                        sql += " and kc.content like '%" + keywordList.get(i) + "%'";
+                    }
+                }
+            }
+
+
+            List<KeyContent> keyContentList = this.keyContentService.selectByKeyArrayListPage(sql, page);
+            if (keyContentList.isEmpty()) {
+
+                sql = "";
+
+                if (StringUtils.isNotBlank(keywords)) {
+                    for (int i = 0; i < keywordList.size(); i++) {
+                        if (i == 0) {
+                            sql += " kc.content like '%" + keywordList.get(i) + "%'";
+                        } else {
+                            sql += " or kc.content like '%" + keywordList.get(i) + "%'";
+                        }
+                    }
+                }
+
+                keyContentList = this.keyContentService.selectByKeyArrayListPage(sql, page);
+            }
+
+            jsonObject = PageJsonUtil.toPageJson(page, keyContentList);
+        } catch (Exception e) {
+            logger.error(e);
+            e.printStackTrace();
+        }
+        return jsonObject;
+    }
+
 
     @RequestMapping("/importExcel")
     public String importHouse(Model model) {
@@ -36,7 +104,6 @@ public class KeyContentController {
         model.addAttribute("currentMenu_menuName", "导入数据");
         return "system/importExcel";
     }
-
 
 
     /**

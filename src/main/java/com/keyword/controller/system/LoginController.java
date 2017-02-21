@@ -220,19 +220,35 @@ public class LoginController extends BaseController {
      * @return
      */
     @RequestMapping("/detail")
-    public String keywordDetail(Integer id, Model model) {
+    public String keywordDetail(Integer id, String keyword, Model model) {
         KeyContent keyContent = null;
         if (id != null) {
+
             try {
+
                 keyContent = this.keyContentService.selectById(id);
                 if (keyContent != null) {
-                    keyContent.setContent(keyContent.getContent().replace(" ", "&nbsp;").replaceAll("\\n", "<br/>") );
+                    String content = keyContent.getContent().replaceAll(" ", "&nbsp;").replaceAll("\\n", "<br/>");
+
+                    if (StringUtils.isNotBlank(keyword)) {
+                        keyword = new String(keyword.getBytes("ISO-8859-1"), "UTF-8");
+
+                        String[] keywordArray = keyword.split(" ");
+                        for (int i=0; i<keywordArray.length; i++) {
+                            if (StringUtils.isNotBlank(keywordArray[i])) {
+                                content = content.replaceAll(keywordArray[i], "<font color='red'>" + keywordArray[i] + "</font>");
+                            }
+                        }
+                    }
+
+                    keyContent.setContent(content);
                 }
             } catch (Exception e) {
                 logger.error(e);
             }
         }
 
+        model.addAttribute("length", keyContent != null && keyContent.getContent() != null ? keyContent.getContent().length() : 0);
         model.addAttribute("keyContent", keyContent);
 
         return "keyword/detail";
@@ -247,35 +263,47 @@ public class LoginController extends BaseController {
     @ResponseBody
     public JsonObject querylist(String keywords, Paging page) {
         JsonObject jsonObject = new JsonObject();
+
+        if (StringUtils.isBlank(keywords)) {
+            return jsonObject;
+        }
+
 		try {
 
-            String orig_keywords = keywords;
-            keywords = keywords.replaceAll(" ", "%");
+            String sql = "";
+            String[] keywordArray = keywords.split(" ");
+            List<String> keywordList = new ArrayList<>();
 
-            if (keywords.charAt(0) != '%') {
-                keywords = '%' + keywords;
+            for (int i=0; i<keywordArray.length; i++) {
+                if (StringUtils.isNotBlank(keywordArray[i])) {
+                    keywordList.add(keywordArray[i]);
+                }
             }
 
-            if (keywords.charAt(keywords.length()-1) != '%') {
-                keywords = keywords + '%';
+            for (int i=0; i<keywordList.size(); i++) {
+                if (i == 0) {
+                    sql += " kc.content like '%" + keywordList.get(i) + "%'";
+                } else {
+                    sql += " and kc.content like '%" + keywordList.get(i) + "%'";
+                }
             }
 
-            List<KeyContent> keyContentList = this.keyContentService.selectByKeywordsListPage(keywords, page);
+            List<KeyContent> keyContentList = this.keyContentService.selectByKeyArrayListPage(sql, page);
             if (keyContentList.isEmpty()) {
-                String sql = "";
-                String[] keywordArray = orig_keywords.split(" ");
 
-                for (int i=0; i<keywordArray.length; i++) {
+                sql = "";
+
+                for (int i=0; i<keywordList.size(); i++) {
                     if (i == 0) {
-                        sql += " kc.content like '%" + keywordArray[i].replaceAll(" ", "") + "%'";
+                        sql += " kc.content like '%" + keywordList.get(i) + "%'";
                     } else {
-                        sql += " or kc.content like '%" + keywordArray[i].replaceAll(" ", "") + "%'";
+                        sql += " or kc.content like '%" + keywordList.get(i) + "%'";
                     }
                 }
 
                 keyContentList = this.keyContentService.selectByKeyArrayListPage(sql, page);
-
             }
+
 			jsonObject = PageJsonUtil.toPageJson(page, keyContentList);
 		} catch (Exception e) {
 			logger.error(e);

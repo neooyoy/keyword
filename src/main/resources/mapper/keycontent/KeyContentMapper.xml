@@ -125,7 +125,11 @@
         kc.keyword,
         kc.content
         from key_content kc
-        where  ${keywords}
+
+        <if test="keywords != null and keywords != ''">
+            where  ${keywords}
+        </if>
+
         order by kc.id desc
     </select>
 

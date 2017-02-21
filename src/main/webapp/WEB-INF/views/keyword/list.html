@@ -47,7 +47,7 @@
 <script id="tabletemplate" type="x-tmpl-mustache">
 			{{#rows}}
 				<li {{#hasClassOfmr}} class="mr0" {{/hasClassOfmr}} >
-					<a href="${base}/detail?id={{id}}" target="_blank">
+					<a href="${base}/detail?id={{id}}&keyword={{keyword}}" target="_blank">
 						<!--<img src="http://${pictureUrl}/{{imgpath}}${picLastList}" width="375" height="250" alt="{{name}}" />-->
 						<div class="mask"></div>
 						<div class="office-msg">
@@ -97,7 +97,7 @@
                                 result.rows[i].hasClassOfmr = true;
                             }
 
-//                            result.rows[i]["keyword"] =  encodeURI($("#keywords").val().trim()) ;
+                            result.rows[i]["keyword"] =  encodeURI($("#keywords").val().trim()) ;
 
                         }
 

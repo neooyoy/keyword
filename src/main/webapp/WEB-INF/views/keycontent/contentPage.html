@@ -1,0 +1,117 @@
+[@override name="title" ]数据列表[/@override]
+[@override name="css_or_script" ][/@override]
+[@override name="content"]
+<style>
+    .table thead tr th, .table tbody tr td {
+        word-wrap: break-word;
+        word-break: break-all;
+    }
+
+    .textbox, .textbox-text {
+        max-width: 100%;
+    }
+</style>
+<div class="page-content">
+    <div class="panel">
+        <div class="panel-heading">
+            查询条件
+        </div>
+
+        <div class="panel-body">
+            <form id="rentDetailForm">
+
+                <div class="form-inline">
+
+                    <div class="form-group">
+                        <input id="input_name" type="text" placeholder="请输入关键字， 以空格隔开" class="form-control" style="width: 350px !important;">
+                    </div>
+
+                    <div class="form-group">
+                        <button type="button" id='btn_search' value="查询" class="btn btn-default" onclick="search()">
+                            <i class="fa fa-search"></i>
+                            查询
+                        </button>
+
+                        <button type="button" value="清空" class="btn btn-default" id="btn_clean"
+                                onclick="clearSearchValue()">
+                            <i class="fa fa-clean"></i>
+                            清空
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="page-content">
+    <div class="panel">
+        <div class="panel-body">
+            <div class="row negative-margin">
+
+                <table id="openRent_grid" class="datagrid"
+                       datagrid="{
+                                    id: 'openRent_grid',
+                                    _handleTbodyTrClick: function (record) {
+                                        contentDetail(record);
+                                    },
+                                    trTdentity: 'id',
+                                    params: getGridParams(),
+                                    rowNumber: true,
+                                    lineLenth: 100,
+                                    url: '${base}/keycontentController/searchContentList',
+                                    tHeadCols:[
+                                        { field: 'simpleContent', title: '关键字内容', width: 150, align: 'center', sortable: false},
+                                    ]
+                                  }">
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(function() {
+        $('#input_name').bind('keypress', function (event) {
+            if (event.keyCode == "13") {
+                search();
+            }
+        });
+    })
+
+    function contentDetail(record) {
+        var keywords = $('#input_name').val();
+        var url = base + "/detail?id=" + record["id"];
+        if (keywords != null && keywords!= null) {
+            url += '&keyword=' + keywords;
+        }
+        window.open(url);
+    }
+
+    function search() {
+        $('#openRent_grid')['openRent_grid'].reload({
+            params: getGridParams()
+        })
+    }
+
+    function clearSearchValue() {
+        $("#rentDetailForm")[0].reset();
+        search();
+    }
+
+    function getGridParams() {
+
+        var params = {
+            'keywords': $('#input_name').val()
+        };
+
+        return params;
+    }
+
+</script>
+
+[/@override]
+[@extends name="views/base.html"/]
