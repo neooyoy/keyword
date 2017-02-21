@@ -65,6 +65,7 @@ public class LoginHandlerInterceptor extends HandlerInterceptorAdapter {
         /**访问网站前台不需要验证*/
         if (request.getServletPath().equals("/")
                 || request.getServletPath().startsWith("/login")
+                || request.getServletPath().startsWith("/kaptcha")
                 || request.getServletPath().startsWith("/querylist")
                 || request.getServletPath().startsWith("/detail")) {
             return true;

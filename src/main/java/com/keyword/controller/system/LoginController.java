@@ -231,7 +231,7 @@ public class LoginController extends BaseController {
                     String content = keyContent.getContent().replaceAll(" ", "&nbsp;").replaceAll("\\n", "<br/>");
 
                     if (StringUtils.isNotBlank(keyword)) {
-                        keyword = new String(keyword.getBytes("ISO-8859-1"), "UTF-8");
+//                        keyword = new String(keyword.getBytes("ISO-8859-1"), "UTF-8");
 
                         String[] keywordArray = keyword.split(" ");
                         for (int i=0; i<keywordArray.length; i++) {
