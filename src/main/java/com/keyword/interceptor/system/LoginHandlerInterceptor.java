@@ -1,8 +1,11 @@
 package com.keyword.interceptor.system;
 
 import com.keyword.annotation.BusinessLog;
+import com.keyword.annotation.IgnoreAuth;
+import com.keyword.constant.Constant;
 import com.keyword.dao.system.UserDao;
 import com.keyword.dao.system.UserRoleDao;
+import com.keyword.domain.system.User;
 import com.keyword.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +14,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * 登录验证 User: zhanglin Date: 2015/12/4 Time: 11:14
@@ -56,16 +60,17 @@ public class LoginHandlerInterceptor extends HandlerInterceptorAdapter {
             ModifyActionidUtil.modifyActionid(businessLog.value(), request);
         }
 
-        /*User u = null;
+        User u = null;
 
-        *//**访问网站前台不需要验证*//*
+        /**访问网站前台不需要验证*/
         if (request.getServletPath().equals("/")
-                || request.getServletPath().startsWith("/list")
+                || request.getServletPath().startsWith("/login")
+                || request.getServletPath().startsWith("/querylist")
                 || request.getServletPath().startsWith("/detail")) {
             return true;
         }
 
-        boolean authFlag = true;
+        boolean authFlag = false;
         String url = "";
         String base = request.getContextPath();
 
@@ -82,26 +87,22 @@ public class LoginHandlerInterceptor extends HandlerInterceptorAdapter {
             if (session != null && session.getAttribute("user") != null) {//验证session是否存在
                 u = (User) session.getAttribute("user");
 
-                *//**普通用户只能访问楼盘管理相关页面*//*
-               *//* if (!request.getServletPath().startsWith("/officeController/") && !request.getServletPath().startsWith("/officeimgsController")
+                /**普通用户只能访问楼盘管理相关页面*/
+                if (!request.getServletPath().startsWith("/keycontentController/")
                         && u.getRoleId().equals(Constant.COMMON_ROLE_ID)) {
-                    url = base + "/officeController/officelist";
+                    url = base + "/keycontentController/importExcel";
                     authFlag = true;
-                }*//*
-
-                authFlag = true;
+                }
 
             } else {
-                url = base + "/index";
+                url = base + "/";
                 authFlag = true;
             }
         }
 
-
-
         if (authFlag) {
             response.sendRedirect(url);
-        }*/
+        }
 
         return true;
     }

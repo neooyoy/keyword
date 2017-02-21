@@ -49,10 +49,6 @@ public class UbanConstant {
      */
     public static String SESSION_TOKEN;
 
-    public static String PICTURE_URL;
-    public static String PIC_LAST_DETAIL;
-    public static String PIC_LAST_LIST;
-
     /**
      * 重新加载常量
      *
@@ -64,8 +60,5 @@ public class UbanConstant {
         SESSION_PREFIX = PropUtil.getPropValue("config", "session.prefix");
         SESSION_TOKEN = PropUtil.getPropValue("config", "session.token");
         STATIC_VERSION = PropUtil.getPropValue("config", "static.version");
-        PICTURE_URL = PropUtil.getPropValue("config", "pictureUrl");
-        PIC_LAST_DETAIL = PropUtil.getPropValue("config", "pic.last.detail");
-        PIC_LAST_LIST = PropUtil.getPropValue("config", "pic.last.list");
     }
 }

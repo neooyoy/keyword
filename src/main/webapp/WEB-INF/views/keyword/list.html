@@ -16,17 +16,14 @@
 <div class="wrapper">
     <div class="header">
         <div class="container">
-            <h1 class="inline-block"><img class="mr15" src="${jspath}/resources/foreground/images/logo.jpg" width="161"
-                                          height="36"/></h1>
-            <a class="text-link" href="${base}/foreGround/index">首页</a>
-            <a class="text-link" href="#" target="_blank">写字楼出租</a>
-            <span class="flo-right mr35">24小时服务热线：<em class="text-red7">${servicehotlines.phone}</em></span>
+            <a class="text-link" href="${base}/">首页</a>
+            <a class="text-link" href="#" target="_blank">关键字查询</a>
         </div>
     </div>
 
     <div class="container">
         <div class="search clearfix mt35">
-            <input id="officeName" class="text-inp" type="text" placeholder="请输入您要找的写字楼名称" value="${officeName}"/>
+            <input id="keywords" class="text-inp" type="text" placeholder="请输入关键字， 以空格隔开" value="${officeName}"/>
             <input class="search-btn" type="button" value="搜索" onclick="loadOfficeList(1);"/>
         </div>
         <ul class="office-cont clearfix pb30" id="office_ul">
@@ -36,12 +33,12 @@
         </ul>
     </div>
 
-    <div class="footer">
+    <!--<div class="footer">
         <p>
             地址：${serviceadderss.name}<br/>
             京ICP证16032088号
         </p>
-    </div>
+    </div>-->
 </div>
 <script type="text/javascript" src="${jspath}/resources/foreground/js/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="${jspath}/resources/foreground/js/idangerous.swiper.min.js"></script>
@@ -50,12 +47,11 @@
 <script id="tabletemplate" type="x-tmpl-mustache">
 			{{#rows}}
 				<li {{#hasClassOfmr}} class="mr0" {{/hasClassOfmr}} >
-					<a href="${base}/foreGround/detail?id={{id}}" target="_blank">
-						<img src="http://${pictureUrl}/{{imgpath}}${picLastList}" width="375" height="250" alt="{{name}}" />
+					<a href="${base}/detail?id={{id}}" target="_blank">
+						<!--<img src="http://${pictureUrl}/{{imgpath}}${picLastList}" width="375" height="250" alt="{{name}}" />-->
 						<div class="mask"></div>
 						<div class="office-msg">
-							{{name}}<br />
-							{{price}}元/天/㎡
+							{{simpleContent}}
 						</div>
 					</a>
 				</li>
@@ -69,7 +65,7 @@
     $(function () {
         loadOfficeList(1);
 
-        $('#officeName').bind('keypress', function (event) {
+        $('#keywords').bind('keypress', function (event) {
             if (event.keyCode == "13") {
                 loadOfficeList(1);
             }
@@ -77,12 +73,17 @@
     });
 
     function loadOfficeList(pageIndex) {
+        if ($("#keywords").val() == null || $("#keywords").val().trim() == '') {
+//            alert('请输入关键字！');
+            return false;
+        }
+
         if (pageIndex != null) {
             currentPage = pageIndex;
         }
 
-        $.post("${base}/foreGround/querylist", {
-                    "name": $("#officeName").val().trim(),
+        $.post("${base}/querylist", {
+                    "keywords": $("#keywords").val().trim(),
                     "currentPage": currentPage,
                     "maxResults": maxResults,
                     "order": 'id',
@@ -95,6 +96,9 @@
                             if ((i + 1) % 3 == 0) {
                                 result.rows[i].hasClassOfmr = true;
                             }
+
+//                            result.rows[i]["keyword"] =  encodeURI($("#keywords").val().trim()) ;
+
                         }
 
                         $("#office_ul").html(Mustache.render($("#tabletemplate").html(), result));

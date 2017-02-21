@@ -42,18 +42,6 @@
                             </div>
                         </a>
                     </li>
-
-                    [#if "${active}" == "firstPage"]
-                    <li class="active">
-                        [#else]
-                    <li>
-                        [/#if]
-
-                    <a href="${base}/firtPageController/firstPage">
-                        <div class="content-box">
-                            <span class="submenu-title">首页管理</span>
-                        </div>
-                    </a>
                 </ul>
             </li>
             [/#if]
@@ -63,19 +51,19 @@
                     <i class="fa fa-property fa-fw">
                         <div class="icon-bg bg-orange"></div>
                     </i>
-                    <span class="menu-title">楼盘管理</span>
+                    <span class="menu-title">数据管理</span>
                     <span class="fa arrow"></span>
                 </a>
                 <ul class="nav nav-second-level collapse in" style="">
-                    [#if "${active}" == "office"]
+                    [#if "${active}" == "excel"]
                         <li class="active">
                     [#else]
                         <li>
                     [/#if]
                         <span class="circular-mark"></span>
-                        <a href="${base}/officeController/officelist">
+                        <a href="${base}/keycontentController/importExcel">
                             <div class="content-box">
-                                <span class="submenu-title">楼盘列表</span>
+                                <span class="submenu-title">导入数据</span>
                             </div>
                         </a>
                     </li>

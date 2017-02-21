@@ -19,6 +19,11 @@ public interface KeyContentService{
     
     public Integer deleteById(Integer id);
 
+    public Integer deleteByKeywords(String keywords) throws Exception;
+
+
+    public Integer deleteAll() throws Exception;
+
     /**
      * 批量导入数据
      *
@@ -28,5 +33,8 @@ public interface KeyContentService{
      */
     public Integer batchInsertKeyContents(List<KeyContent> contentList) throws Exception;
 
+    public List<KeyContent> selectByKeywordsListPage(String Keywords, Paging page) throws Exception;
+
+    public List<KeyContent> selectByKeyArrayListPage(String keywords, Paging page) throws Exception;
 }
 

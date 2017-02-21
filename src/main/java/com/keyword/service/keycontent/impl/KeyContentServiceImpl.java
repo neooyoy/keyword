@@ -58,5 +58,21 @@ public class KeyContentServiceImpl implements KeyContentService{
     public Integer batchInsertKeyContents(List<KeyContent> contentList) throws Exception {
         return this.keycontentDao.batchInsertKeyContents(contentList);
     }
+
+    public Integer deleteByKeywords(String keywords) throws Exception {
+        return this.keycontentDao.deleteByKeywords(keywords);
+    }
+
+    public Integer deleteAll() throws Exception{
+        return this.keycontentDao.deleteAll();
+    }
+
+    public List<KeyContent> selectByKeywordsListPage(String Keywords, Paging page) throws Exception {
+        return this.keycontentDao.selectByKeywordsListPage(Keywords, page);
+    }
+
+    public List<KeyContent> selectByKeyArrayListPage(String keywords, Paging page) throws Exception {
+        return this.keycontentDao.selectByKeyArrayListPage(keywords, page);
+    }
 }
 

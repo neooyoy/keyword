@@ -32,7 +32,7 @@ public class AuthHandlerInterceptor extends HandlerInterceptorAdapter {
         }
 
         if (!flag) {
-            response.sendRedirect(request.getContextPath() + "/loginxiezilou");
+            response.sendRedirect(request.getContextPath() + "/login");
 
             // 转发
 //            request.setAttribute("msg", "没有权限");

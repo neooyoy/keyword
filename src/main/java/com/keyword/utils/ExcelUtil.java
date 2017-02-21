@@ -15,6 +15,72 @@ public class ExcelUtil {
         readExcel("d:\\\\github\\\\workspace_private\\\\word\\\\知识库最新版2.20.xlsx");
     }*/
 
+
+    /*public static void main(String[] args)   {
+
+        String test = "力盟商业巷（纺织品大楼）";
+        String test1 = "15";
+        String test2 = "新宁广场南";
+        String test3 = "16";
+
+        System.out.println(flushLeft(' ', 26 , test) + flushLeft(' ', 26 , test1));
+        System.out.println(flushLeft(' ', 26 , test2) + flushLeft(' ', 26 , test3));
+
+
+    }*/
+
+
+    /**
+     * 根据Unicode编码判断中文汉字和符号
+     * @param c
+     * @return
+     */
+    private static boolean isChinese(char c) {
+        Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
+        if (ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS
+                || ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
+                || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A
+                || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B
+                || ub == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION
+                || ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS
+                || ub == Character.UnicodeBlock.GENERAL_PUNCTUATION) {
+
+            return true;
+        }
+        return false;
+
+    }
+
+    /* c 要填充的字符
+  *  length 填充后字符串的总长度
+  *  content 要格式化的字符串
+  *  格式化字符串，左对齐
+  * */
+    public static String flushLeft(char c, long length, String content){
+        String str = "";
+        long cl = 0;
+        String cs = "";
+
+        int chineseNum = 0;
+        for (int i=0; i<content.length(); i++) {
+            if (isChinese(content.charAt(i))) {
+                chineseNum += 2;
+            } else {
+                chineseNum += 1;
+            }
+        }
+
+        if (chineseNum > length){
+            str = content;
+        }else{
+            for (int i = 0; i < length - chineseNum; i++){
+                cs = cs + c;
+            }
+        }
+        str = content + cs;
+        return str;
+    }
+
     private static SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
 
     private static Map<String, Integer> SPECIAL_KEYWORD_MAP = new HashMap<>();
@@ -166,15 +232,28 @@ public class ExcelUtil {
                 int block_end_x = Integer.valueOf(curBlockArray[2]);
                 int block_end_y = Integer.valueOf(curBlockArray[3]);
 
-                for (int i = block_begin_x; i < block_end_x; i++) {
-                    for (int j = block_begin_y; j < block_end_y; j++) {
-                        if (keywords[i][j] != null && !value.equals(keywords[i][j])) {
+                for (int i = block_begin_x; i <= block_end_x; i++) {
+                    for (int j = block_begin_y; j <= block_end_y; j++) {
+
+                        if (StringUtils.isNotBlank(keywords[i][j])) {
+
+                            data.append(flushLeft(' ', 26 , keywords[i][j]));
+
+                        } else {
+
+                            data.append(flushLeft(' ', 26 , ""));
+                        }
+
+                        /*if (keywords[i][j] != null && !value.equals(keywords[i][j])) {
                             value = keywords[i][j];
-                            data.append("\t");
+                            data.append("\t\t\t");
+
+                            String.format("% 4d", number1)
+
                             data.append(keywords[i][j]);
                         } else {
-                            data.append("\t");
-                        }
+                            data.append("\t\t\t");
+                        }*/
                     }
 
                     data.append("\n");

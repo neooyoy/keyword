@@ -100,4 +100,33 @@
         </foreach>
     </insert>
 
+    <delete id="deleteAll">
+        delete from `key_content`
+    </delete>
+
+    <delete id="deleteByKeywords" parameterType="java.lang.String">
+        delete from `key_content` where keyword in (#{keywords})
+    </delete>
+
+
+    <select id="selectByKeywordsListPage" resultMap="keycontentMap" parameterType="map">
+        select
+        kc.id,
+        kc.keyword,
+        kc.content
+        from key_content kc
+        where kc.content LIKE #{keywords}
+        order by kc.id desc
+    </select>
+
+    <select id="selectByKeyArrayListPage" resultMap="keycontentMap" parameterType="map">
+        select
+        kc.id,
+        kc.keyword,
+        kc.content
+        from key_content kc
+        where  ${keywords}
+        order by kc.id desc
+    </select>
+
 </mapper>

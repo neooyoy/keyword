@@ -468,7 +468,8 @@ fieldset.hot-title {
 	left: 50%;
 	min-width: 116px;
 	padding: 10px 10px;
-	margin: -40px -68px;
+	margin: -117px -143px;
+	margin-right: 10px;
 	color: #FFF;
 	font-size: 20px;
 	text-align: center;
@@ -585,5 +586,5 @@ fieldset.hot-title {
 	left: 0px;
 	right: 0px;
 	bottom: 0px;
-	background-color: rgba(0, 0, 0, 0.25);
+	background-color: rgba(40, 164, 201, 1.25);
 }

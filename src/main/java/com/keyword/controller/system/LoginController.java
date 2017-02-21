@@ -2,21 +2,31 @@ package com.keyword.controller.system;
 
 import com.keyword.constant.Constant;
 import com.keyword.controller.base.BaseController;
+import com.keyword.domain.keycontent.KeyContent;
 import com.keyword.domain.system.User;
 import com.keyword.domain.system.UserRole;
+import com.keyword.mybatis.Paging;
+import com.keyword.service.keycontent.KeyContentService;
 import com.keyword.service.system.SystemService;
 import com.keyword.utils.AES_DE;
+import com.keyword.utils.PageJsonUtil;
+import com.keyword.vo.JsonObject;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 登录入口
@@ -29,6 +39,9 @@ public class LoginController extends BaseController {
 
     @Resource
     public SystemService systemService;
+
+    @Autowired
+    private KeyContentService keyContentService;
 
     @Value("#{config['sso.login.sys.token']}")
     private String sso_login_sys_token;
@@ -157,7 +170,7 @@ public class LoginController extends BaseController {
             session.setAttribute("user", curUser);
 
             if (curUser.getRoleId().equals(Constant.COMMON_ROLE_ID)) {
-                url = "redirect:/officeController/officelist";
+                url = "redirect:/keycontentController/importExcel";
             } else {
                 url = "redirect:/system/user";
             }
@@ -187,6 +200,10 @@ public class LoginController extends BaseController {
         return "system/login";
     }
 
+
+
+
+
     /**
      * 系统首页
      */
@@ -195,5 +212,76 @@ public class LoginController extends BaseController {
         return "keyword/list";
     }
 
+
+    /**
+     * 详情
+     *
+     * @param id
+     * @return
+     */
+    @RequestMapping("/detail")
+    public String keywordDetail(Integer id, Model model) {
+        KeyContent keyContent = null;
+        if (id != null) {
+            try {
+                keyContent = this.keyContentService.selectById(id);
+                if (keyContent != null) {
+                    keyContent.setContent(keyContent.getContent().replace(" ", "&nbsp;").replaceAll("\\n", "<br/>") );
+                }
+            } catch (Exception e) {
+                logger.error(e);
+            }
+        }
+
+        model.addAttribute("keyContent", keyContent);
+
+        return "keyword/detail";
+    }
+
+    /**
+     * 列表查询
+     *
+     * @return
+     */
+    @RequestMapping("/querylist")
+    @ResponseBody
+    public JsonObject querylist(String keywords, Paging page) {
+        JsonObject jsonObject = new JsonObject();
+		try {
+
+            String orig_keywords = keywords;
+            keywords = keywords.replaceAll(" ", "%");
+
+            if (keywords.charAt(0) != '%') {
+                keywords = '%' + keywords;
+            }
+
+            if (keywords.charAt(keywords.length()-1) != '%') {
+                keywords = keywords + '%';
+            }
+
+            List<KeyContent> keyContentList = this.keyContentService.selectByKeywordsListPage(keywords, page);
+            if (keyContentList.isEmpty()) {
+                String sql = "";
+                String[] keywordArray = orig_keywords.split(" ");
+
+                for (int i=0; i<keywordArray.length; i++) {
+                    if (i == 0) {
+                        sql += " kc.content like '%" + keywordArray[i].replaceAll(" ", "") + "%'";
+                    } else {
+                        sql += " or kc.content like '%" + keywordArray[i].replaceAll(" ", "") + "%'";
+                    }
+                }
+
+                keyContentList = this.keyContentService.selectByKeyArrayListPage(sql, page);
+
+            }
+			jsonObject = PageJsonUtil.toPageJson(page, keyContentList);
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
+        return jsonObject;
+    }
 
 }

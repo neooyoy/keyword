@@ -31,10 +31,6 @@ public class RichFreeMarkerView extends FreeMarkerView {
      */
     public static final String CONTEXT_JSPATH = "jspath";
 
-	public static final String CONTEXT_PICTURE_URL = "pictureUrl";
-	public static final String CONTEXT_PIC_LAST_LIST = "picLastList";
-	public static final String CONTEXT_PIC_LAST_DETAIL = "picLastDetail";
-
 	public static final String CSSJS_VERSION = "staticversion";
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -64,8 +60,5 @@ public class RichFreeMarkerView extends FreeMarkerView {
 		model.put(CONTEXT_PATH, request.getContextPath());
 		model.put(CONTEXT_JSPATH, UbanConstant.JSPATH);
 		model.put(CSSJS_VERSION, UbanConstant.STATIC_VERSION);
-		model.put(CONTEXT_PICTURE_URL, UbanConstant.PICTURE_URL);
-		model.put(CONTEXT_PIC_LAST_LIST, UbanConstant.PIC_LAST_LIST);
-		model.put(CONTEXT_PIC_LAST_DETAIL, UbanConstant.PIC_LAST_DETAIL);
 	}
 }

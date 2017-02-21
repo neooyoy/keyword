@@ -18,9 +18,13 @@
             <div class="form-inline">
 
                 <div class="form-group">
+                        <input type="button" class="btn-blue" style="height: 32px;" value="删除历史数据" onclick="beforeUpload()" >
+                </div>
+
+                <div class="form-group">
                     <a id="importFile_a" class="btn-file" href="#">
                         <span><i class="fa fa-pic"></i>&nbsp;一键上传excel导入信息</span>
-                        <input type="file" id="importFile_btn" name="files" multiple="true" data-url="${base}/system/doImportExcel">
+                        <input type="file" id="importFile_btn" name="files" multiple="true" data-url="${base}/keycontentController/doImportExcel" >
                     </a>
                 </div>
 
@@ -38,10 +42,7 @@
                 </table>
             </div>
             <div class="mam pull-left" id="show_comm">
-                注: excel表头请按照列表"序号"右侧的；<br/>
-                &nbsp;● "装修标准"包括: 毛坯、简装、精装；<br/>
-                &nbsp;● "付款方式"包括: 押一付一、押一付三、押一付六、押二付三、押二付六、押三付一、押三付三、押三付六、押三付年；<br/>
-                &nbsp;● "是否包含物业费"如果包含则值为"包含"。<br/>
+                注: 请谨慎操作！<br/>
             </div>
         </div>
     </div>
@@ -122,15 +123,20 @@
             dataType: "json",
             done: function (e, data) {
                 if (data.result.success) {
-                    alert(data.result.message);
-                }
 
-                gcount--;
-                if (gcount == 0) {
-                    setTimeout(function () {
-                        $('#importMsg').html('');
-                        $('#uploadprocess').modal('hide');
-                    }, 2000)
+                    total += data.result.total;
+                    gcount--;
+                    if (gcount == 0) {
+                        alert("共导入" + total + "条数据");
+
+                        total = 0;
+
+                        setTimeout(function () {
+                            $('#importMsg').html('');
+                            $('#uploadprocess').modal('hide');
+                            $('#importFile_btn').attr('disabled', false);
+                        }, 500)
+                    }
                 }
             },
             progressall: function (e, data) {
@@ -153,18 +159,33 @@
                 if ($('#uploadprocess').css('display') == 'none') {
                     $('#uploadprocess').modal('show');
                     //50秒强制关闭模态框
-                    setTimeout(function () {
-                        if ($('#uploadprocess').css('display') != 'none') {
-                            $('#uploadprocess').modal('hide');
-                        }
-                    }, 5000);
+                   /* setTimeout(function () {
+                     if ($('#uploadprocess').css('display') != 'none') {
+                     $('#uploadprocess').modal('hide');
+                     }
+                     }, 5000);*/
                 }
+
+                $('#importFile_btn').attr('disabled', true);
+
                 gcount++;
                 data.submit();
             }
         });
 
     });
+
+    function beforeUpload() {
+        if (confirm('确认删除所有历史数据吗？')) {
+            $.post(base + '/keycontentController/deleteOldData', {}, function(result) {
+                if (result.success) {
+                    alert("成功删除所有历史数据， 请导入新数据！")
+                } else {
+                    alert("删除所有历史数据失败")
+                }
+            });
+        }
+    }
 
 </script>
 [/@override]
