@@ -56,7 +56,7 @@ public class UbanConstant {
      */
     public static void reloadConfig() throws Exception {
         // js常量相关
-        JSPATH = "";
+        JSPATH = PropUtil.getPropValue("config", "jspath");
         SESSION_PREFIX = PropUtil.getPropValue("config", "session.prefix");
         SESSION_TOKEN = PropUtil.getPropValue("config", "session.token");
         STATIC_VERSION = PropUtil.getPropValue("config", "static.version");
