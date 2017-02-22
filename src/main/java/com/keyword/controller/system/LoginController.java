@@ -100,7 +100,7 @@ public class LoginController extends BaseController {
                 return "system/login";
             }
 
-            if (curUser.getForbidden().equals(1)) {
+            /*if (curUser.getForbidden().equals(1)) {
                 Integer curMinute = (int) (System.currentTimeMillis() / 1000);
                 if ((curUser.getLastLoginAt() + 15 * 60) > curMinute) {
                     model.addAttribute("message", "请" + ((15 * 60 - (curMinute - curUser.getLastLoginAt())) / 60) + "分钟后再登录");
@@ -110,52 +110,27 @@ public class LoginController extends BaseController {
                     curUser.setWrongCount(0);
                     curUser.setForbidden(0);
                 }
-            }
+            }*/
 
             if (!AES_DE.encrypt2(user.getPassword() + user.getLoginname(), sso_login_sys_token).toLowerCase().equals(curUser.getPassword())) {
-                if (curUser.getWrongCount() < 3) {
-                    User modifyUser = new User();
-                    modifyUser.setId(curUser.getId());
-                    modifyUser.setWrongCount(curUser.getWrongCount() + 1);
-                    modifyUser.setForbidden(0);
-                    systemService.modifyUser(modifyUser);
+                User modifyUser = new User();
+                modifyUser.setId(curUser.getId());
+                modifyUser.setWrongCount(curUser.getWrongCount() + 1);
+                modifyUser.setForbidden(0);
+                systemService.modifyUser(modifyUser);
 
-                    model.addAttribute("message", "登录名或密码错误");
-                    model.addAttribute("loginname", user.getLoginname());
-                    model.addAttribute("password", user.getPassword());
-                    return "system/login";
-                } else if (curUser.getWrongCount() >= 3 && curUser.getWrongCount() < 5) { //需要输入验证码
-                    User modifyUser = new User();
-                    modifyUser.setId(curUser.getId());
-                    modifyUser.setWrongCount(curUser.getWrongCount() + 1);
-                    systemService.modifyUser(modifyUser);
-
-                    model.addAttribute("message", "登录名或密码错误, 您还有" + (5 - curUser.getWrongCount()) + "次尝试机会");
-                    model.addAttribute("loginname", user.getLoginname());
-                    model.addAttribute("password", user.getPassword());
-                    model.addAttribute("showVerifycode", 1);
-                    return "system/login";
-                } else { //登录错误次数等于6次，15分钟后才可以再次登录
-                    User modifyUser = new User();
-                    modifyUser.setId(curUser.getId());
-                    modifyUser.setWrongCount(curUser.getWrongCount() + 1);
-                    modifyUser.setForbidden(1);
-                    modifyUser.setLastLoginAt((int) (System.currentTimeMillis() / 1000));
-                    systemService.modifyUser(modifyUser);
-
-                    model.addAttribute("message", "登录名或密码错误, 请15分钟后再登录");
-                    model.addAttribute("loginname", user.getLoginname());
-                    model.addAttribute("password", user.getPassword());
-                    return "system/login";
-                }
+                model.addAttribute("message", "密码错误");
+                model.addAttribute("loginname", user.getLoginname());
+                model.addAttribute("password", user.getPassword());
+                return "system/login";
             }
 
-            User modifyUser = new User();
+            /*User modifyUser = new User();
             modifyUser.setId(curUser.getId());
             modifyUser.setWrongCount(0);
             modifyUser.setForbidden(0);
             modifyUser.setLastLoginAt((int) (System.currentTimeMillis() / 1000));
-            systemService.modifyUser(modifyUser);
+            systemService.modifyUser(modifyUser);*/
 
 
             UserRole userRole = systemService.selectByUserId(curUser.getId());
@@ -166,7 +141,7 @@ public class LoginController extends BaseController {
             curUser.setPassword(null);
 
             //保存session
-            HttpSession session = request.getSession(true);
+            HttpSession session = request.getSession();
             session.setAttribute("user", curUser);
 
             if (curUser.getRoleId().equals(Constant.COMMON_ROLE_ID)) {
@@ -177,7 +152,7 @@ public class LoginController extends BaseController {
         } catch (Exception e) {
             e.printStackTrace();
             logger.error(e);
-            model.addAttribute("message", "登录名或密码错误");
+            model.addAttribute("message", "系统错误");
             return "system/login";
         }
 
