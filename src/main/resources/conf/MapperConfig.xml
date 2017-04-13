@@ -11,7 +11,7 @@
 		<setting name="defaultStatementTimeout" value="25000" />
 	</settings>
 	<plugins>
-		<plugin interceptor="com.keyword.mybatis.PagingPlugin">
+		<plugin interceptor="com.cj.mybatis.PagingPlugin">
 			<property name="dialect" value="mysql" />
 			<property name="pageSqlId" value=".*ListPage.*" />
 		</plugin>

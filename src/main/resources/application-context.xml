@@ -18,7 +18,7 @@
 	<context:property-placeholder location="classpath:config.properties"
 		ignore-unresolvable="true" />
 
-	<context:component-scan base-package="com.keyword">
+	<context:component-scan base-package="com.cj">
 		<context:exclude-filter type="annotation"
 			expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>
@@ -72,7 +72,7 @@
 		<property name="filters" value="wall,stat" />
 	</bean>
 
-	<bean id="multipleDataSource" class="com.keyword.utils.MultipleDataSource">
+	<bean id="multipleDataSource" class="com.cj.utils.MultipleDataSource">
 		<property name="defaultTargetDataSource" ref="slaveDataSource" />
 		<property name="targetDataSources">
 			<map>
@@ -90,8 +90,8 @@
 	</bean>
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
-		<property name="basePackage" value="com.keyword.dao" />
-		<property name="markerInterface" value="com.keyword.mybatis.dao.BaseDao" />
+		<property name="basePackage" value="com.cj.dao" />
+		<property name="markerInterface" value="com.cj.mybatis.dao.BaseDao" />
 	</bean>
 
 	<bean id="transactionManager"
@@ -114,11 +114,11 @@
 
 	<tx:annotation-driven transaction-manager="transactionManager" />
 
-	<bean id="manyDataSourceAspect" class="com.keyword.aspect.DataSourceAspect" />
+	<bean id="manyDataSourceAspect" class="com.cj.aspect.DataSourceAspect" />
 	<aop:config>
 		<aop:aspect id="c" ref="manyDataSourceAspect">
 			<aop:pointcut id="tx"
-						  expression="execution(* com.keyword.dao..*.*(..))" />
+						  expression="execution(* com.cj.dao..*.*(..))" />
 			<aop:before pointcut-ref="tx" method="before" />
 			<aop:after pointcut-ref="tx" method="after"/>
 		</aop:aspect>

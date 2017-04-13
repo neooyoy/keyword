@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.keyword.dao.system.UserRoleDao">
-    <resultMap id="BaseResultMap" type="com.keyword.domain.system.UserRole">
+<mapper namespace="com.cj.dao.system.UserRoleDao">
+    <resultMap id="BaseResultMap" type="com.cj.domain.system.UserRole">
         <id column="id" property="id" jdbcType="INTEGER"/>
         <result column="user_id" property="userId" jdbcType="INTEGER"/>
         <result column="role_id" property="roleId" jdbcType="INTEGER"/>
@@ -25,7 +25,7 @@
         where id = #{id}
     </select>
 
-    <insert id="insert" parameterType="com.keyword.domain.system.UserRole">
+    <insert id="insert" parameterType="com.cj.domain.system.UserRole">
         insert into user_role (id, user_id, role_id,
         creator, creator_name, created_at
         )
@@ -48,7 +48,7 @@
         </foreach>
     </insert>
 
-    <update id="updateByUserId" parameterType="com.keyword.domain.system.UserRole">
+    <update id="updateByUserId" parameterType="com.cj.domain.system.UserRole">
         update user_role
         set
           role_id = #{roleId}

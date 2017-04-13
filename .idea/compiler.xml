@@ -38,8 +38,16 @@
         <processorPath useClasspath="true" />
         <module name="keyword" />
       </profile>
+      <profile default="false" name="Annotation profile for crm" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target\generated-test-sources\test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="crm" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="crm" target="1.7" />
       <module name="demo" target="1.7" />
       <module name="keyword" target="1.7" />
       <module name="publiccms" target="1.7" />

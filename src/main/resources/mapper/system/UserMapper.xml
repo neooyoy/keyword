@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.keyword.dao.system.UserDao">
-    <resultMap id="BaseResultMap" type="com.keyword.domain.system.User">
+<mapper namespace="com.cj.dao.system.UserDao">
+    <resultMap id="BaseResultMap" type="com.cj.domain.system.User">
         <id column="id" property="id" jdbcType="INTEGER"/>
         <result column="loginname" property="loginname" jdbcType="VARCHAR"/>
         <result column="fullname" property="fullname" jdbcType="VARCHAR"/>
@@ -44,7 +44,7 @@
         order by u.${user.order} ${user.sort}
     </select>
 
-    <select id="selectFyshByRoleCode" resultMap="BaseResultMap" parameterType="com.keyword.domain.system.User">
+    <select id="selectFyshByRoleCode" resultMap="BaseResultMap" parameterType="com.cj.domain.system.User">
         SELECT
         u.id,
         u.loginname,
@@ -73,7 +73,7 @@
         where loginname = #{loginname} and isdelete = 0
     </select>
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.keyword.domain.system.User">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.cj.domain.system.User">
         insert into user (id, loginname,
           fullname, email, cell_phone, password
           )
@@ -82,7 +82,7 @@
           )
     </insert>
 
-    <update id="updateById" parameterType="com.keyword.domain.system.User">
+    <update id="updateById" parameterType="com.cj.domain.system.User">
         update user
         <set>
             <if test="fullname !=null">

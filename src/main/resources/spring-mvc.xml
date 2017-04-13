@@ -28,7 +28,7 @@
             <mvc:exclude-mapping path="/resources/**"/>
             <mvc:exclude-mapping path="/stat"/>
             <mvc:exclude-mapping path="/errorpage/**"/>
-            <beans:bean class="com.keyword.interceptor.system.LoginHandlerInterceptor"/>
+            <beans:bean class="com.cj.interceptor.system.LoginHandlerInterceptor"/>
         </mvc:interceptor>
        <!-- <mvc:interceptor>
             <mvc:mapping path="/**/**"/>
